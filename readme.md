@@ -10,7 +10,7 @@ Serve the app from `public/index.php` (you can also move this file; just update 
 ## Configuration
 
 Copy `.env.sample` to `.env` and fill in the values appropriately. The variables are as follows:
-- **MAILGUN_API_KEY**: Your API key generated from Mailgun (https://www.mailgun.com/)\
+- **MAILGUN_API_KEY**: Your API key generated from Mailgun (https://www.mailgun.com/)
 - **MAILGUN_DOMAIN**: The domain name set on your Mailgun account
 - **CONTACT_RECIPIENT**: The email address that will receive contact form submissions
 - **CONTACT_SUBJECT**: Subject of the email containing the contact form submissions
