@@ -15,7 +15,8 @@ Copy `.env.sample` to `.env` and fill in the values appropriately. The variables
 - **CONTACT_RECIPIENT**: The email address that will receive contact form submissions
 - **CONTACT_SUBJECT**: Subject of the email containing the contact form submissions
 - **FORM_DOMAIN**: The domain where the contact form will be hosted. This is to allow cross-domain AJAX requests. If you are hosting this handler and the form on the same domain, you can comment this line out
-  - Note: subdomains count as separate domains. Make sure you include the http(s):/
+  - Note: subdomains count as separate domains. Make sure you include the http(s)://
+  - Separate multiple domains with commas
 - **RECAPTCHA_SECRET**: Your secret code for the ReCaptcha API (https://www.google.com/recaptcha/). Comment this line out if you aren't using ReCaptcha.
 
 ## Usage

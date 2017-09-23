@@ -1,9 +1,16 @@
 <?php
 require('../config.php');
 if(!empty(getenv('FORM_DOMAIN'))){
-	header("Access-Control-Allow-Origin: ".getenv('FORM_DOMAIN'));
+	$origins = explode(",",getenv('FORM_DOMAIN'));
+	foreach($origins as $key => $value){
+		$origins[$key] = trim($value);
+	}
+	if(in_array($_SERVER['HTTP_ORIGIN'], $origins)){
+		$origin = $_SERVER['HTTP_ORIGIN'];
+		header("Access-Control-Allow-Origin: $origin");
+	}
+	
 }
-
 
 $errors=[];
 
