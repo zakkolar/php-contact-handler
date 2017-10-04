@@ -10,6 +10,7 @@ if(!empty(getenv('FORM_DOMAIN'))){
 		header("Access-Control-Allow-Origin: $origin");
 	}
 	else{
+		http_response_code(403);
 		die("This domain is not authorized");
 	}
 	
