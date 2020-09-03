@@ -17,6 +17,8 @@ Copy `.env.sample` to `.env` and fill in the values appropriately. The variables
 - **FORM_DOMAIN**: The domain where the contact form will be hosted. This is to allow cross-domain AJAX requests. If you are hosting this handler and the form on the same domain, you can comment this line out
   - Note: subdomains count as separate domains. Make sure you include the http(s)://
   - Separate multiple domains with commas
+- **BLOCKED_EMAIL_DOMAINS**: Email domains that should be blocked (separated by commas). The form will not send the message if it is filled out with an email from this domain. 
+  - If all the other form fields are filled out correctly, the server will still return a `200 OK` header to make it more difficult for spammers to detect/circumvent the block
 - **RECAPTCHA_SECRET**: Your secret code for the ReCaptcha API (https://www.google.com/recaptcha/). Comment this line out if you aren't using ReCaptcha.
 
 ## Usage
