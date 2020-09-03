@@ -61,6 +61,20 @@ if(!empty(getenv("RECAPTCHA_SECRET"))){
 
 
 if(count($errors)==0){
+
+    $emailDomain = explode("@",$email)[1];
+
+    $blockedDomains = explode(",",getenv('BLOCKED_EMAIL_DOMAINS'));
+
+    foreach($blockedDomains as $key => $value){
+        $blockedDomains[$key] = trim($value);
+    }
+    if(in_array($emailDomain, $blockedDomains)){
+        die();
+    }
+
+
+
 	if(!$mailgun->sendMessage(getenv("MAILGUN_DOMAIN"), array('from'=> "$name <$email>", 
                                 'to'      => getenv("CONTACT_RECIPIENT"), 
                                 'subject' => getenv("CONTACT_SUBJECT"), 
