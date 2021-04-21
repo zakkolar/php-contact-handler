@@ -23,11 +23,11 @@ Copy `.env.sample` to `.env` and fill in the values appropriately. The variables
 
 ## Usage
 
-The form handler looks for POST fields called `name`, `email`, and `message`. All three are required. Optionally, you can add a field for ReCaptcha.
+The form handler looks for POST fields called `name`, `email`, and `message`. All three are required. Optionally, you can add captcha fields (see below)
 
 When the form processed, all responses are returned in JSON format. If the form submits successfully and the email is sent, a `200 OK` header is returned. If the email is not sent (but the form fields are OK), a `500 Internal Server Error` header is returned. If the fields are not filled out correctly (e.g. something is missing, the email address is not valid, the captcha is not filled out, etc.) a `400 Bad Request` response is returned with a JSON array of items to fix.
 
-You can use your favorite combination of HTML/JavaScript frameworks to submit the form and handle the errors. Here is a simple example with vanilla HTML (with Bootstrap classes) and jQuery:
+You can use your favorite combination of HTML/JavaScript frameworks to submit the form and handle the errors. Here is a simple example with HTML (with Bootstrap classes) and jQuery:
 
 ### HTML
 
@@ -50,6 +50,7 @@ You can use your favorite combination of HTML/JavaScript frameworks to submit th
     <label for="human_confirmation" class="control-label">Human confirmation: </label>
     <!-- uncomment to enable ReCaptcha
     <div class="g-recaptcha" data-sitekey="YOUR SITE KEY (note: this is NOT the same as the secret key in .env)"></div>
+    Be sure to include Google's ReCaptcha js as well
     -->
   </fieldset>
   <div class="form-group">
@@ -100,3 +101,31 @@ $(function(){
     });
   });
 ```
+
+## CAPTCHA
+
+There are two options for CAPTCHAs: Google's ReCAPTCHA and Theodore Brown's [Responsive Captcha](https://github.com/theodorejb/Responsive-Captcha). You can specify which (if either) you'd like to use in the `CAPTCHA_MODE` setting in `.env`.
+
+### ReCAPTCHA
+
+For the Google option, you'll need to set up a [ReCAPTCHA](https://developers.google.com/recaptcha/) account. Fill in the `RECAPTCHA_SECRET` in `.env` and include the ReCAPTCHA JS library and the corresponding HTML, including your site key (see the comment examples above).
+
+## Responsive CAPTCHA
+
+This happens completely on your server without third party calls. Include a random `ENCRYPTION_KEY`  in `.env`.  Make a `POST` call to `public/captcha.php` to load a human-friendly question and a secret, encrypted solution. This eliminates complications with third-party cookies if your frontend and backend are on different domains and also allows the CAPTCHA to work if the user opens the form in multiple tabs. You'll receive a response in the following format:
+
+```
+{
+   "captcha":"Which is largest: forty-six, forty-five, or eighteen?",
+   "s":"NSmpkLwkef0qJxNoFsLkylF1NDArdzM5dktST1VZN3RySCszaXc9PQ=="
+}
+```
+
+Your form should include fields named:
+
+- `captcha_response` for the user to type their answer to the question
+- `captcha_s` for the answer returned from `public/captcha.php`
+
+Send these along with the form and the server will take care of the rest.
+
+For CAPTCHA questions that involve numbers, the user can answer by spelling out the number as words or using numerals. See the [Responsive Captcha Github repo](https://github.com/theodorejb/Responsive-Captcha) for more information.

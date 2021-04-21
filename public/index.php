@@ -1,20 +1,6 @@
 <?php
 require('../config.php');
-if(!empty(getenv('FORM_DOMAIN'))){
-	$origins = explode(",",getenv('FORM_DOMAIN'));
-	foreach($origins as $key => $value){
-		$origins[$key] = trim($value);
-	}
-	if(in_array($_SERVER['HTTP_ORIGIN'], $origins)){
-		$origin = $_SERVER['HTTP_ORIGIN'];
-		header("Access-Control-Allow-Origin: $origin");
-	}
-	else{
-		http_response_code(403);
-		die("This domain is not authorized");
-	}
-	
-}
+use theodorejb\ResponsiveCaptcha;
 
 $errors=[];
 
@@ -42,7 +28,7 @@ else{
 	$message=$_POST['message'];
 }
 
-if(!empty(getenv("RECAPTCHA_SECRET"))){
+if(getenv("CAPTCHA_MODE") === 'RECAPTCHA'){
 
 	$secret = getenv("RECAPTCHA_SECRET");
 	 
@@ -56,6 +42,30 @@ if(!empty(getenv("RECAPTCHA_SECRET"))){
 	elseif(!$reCaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR'])->isSuccess()){
 		$errors[]="try the human confirmation again";
 	}
+}
+
+if(getenv('CAPTCHA_MODE') === "RESPONSIVE"){
+
+    $iv_size = openssl_cipher_iv_length(CYPHER);
+
+    $data = base64_decode($_POST['captcha_s']);
+
+    $iv = substr($data, 0, $iv_size);
+    $answer = openssl_decrypt(substr($data, $iv_size), CYPHER, getenv('ENCRYPTION_KEY'), 0, $iv);
+
+    if(is_numeric($answer)){
+        $answer = intval($answer);
+    }
+
+
+
+    if(empty($_POST['captcha_response']) || empty($_POST['captcha_s'])){
+        $errors[]="fill out the human confirmation";
+    }
+    elseif(!ResponsiveCaptcha\checkAnswer($_POST['captcha_response'], $answer)){
+        $errors[]="try the human confirmation again";
+    }
+
 }
 
 
@@ -89,5 +99,3 @@ else{
 	echo json_encode($errors);
 }
 
-
-?>
